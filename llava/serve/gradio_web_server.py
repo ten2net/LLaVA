@@ -279,16 +279,16 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         fout.write(json.dumps(data) + "\n")
 
 title_markdown = ("""
-# 🌋 LLaVA: Large Language and Vision Assistant
+# 🌋 LLaVA: 老马识图～看图理解
 [[Project Page]](https://llava-vl.github.io) [[Paper]](https://arxiv.org/abs/2304.08485) [[Code]](https://github.com/haotian-liu/LLaVA) [[Model]](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md)
 """)
 
 tos_markdown = ("""
-### Terms of use
-By using this service, users are required to agree to the following terms:
-The service is a research preview intended for non-commercial use only. It only provides limited safety measures and may generate offensive content. It must not be used for any illegal, harmful, violent, racist, or sexual purposes. The service may collect user dialogue data for future research.
-Please click the "Flag" button if you get any inappropriate answer! We will collect those to keep improving our moderator.
-For an optimal experience, please use desktop computers for this demo, as mobile devices may compromise its quality.
+### 使用条款
+通过使用此服务，用户必须同意以下条款：
+该服务是一个研究预览，仅供非商业用途。它只提供有限的安全措施，可能会产生攻击性内容。不得将其用于任何非法、有害、暴力、种族主义或性目的。该服务可能会收集用户对话数据以供未来研究。
+如果你得到任何不合适的答案，请点击“标记”按钮！我们将收集这些信息以不断改进我们的模型。
+为了获得最佳体验，请使用台式电脑进行演示，因为移动设备可能会影响其质量.
 """)
 
 
@@ -306,7 +306,7 @@ block_css = """
 """
 
 def build_demo(embed_mode):
-    textbox = gr.Textbox(show_label=False, placeholder="Enter text and press ENTER", container=False)
+    textbox = gr.Textbox(show_label=False, placeholder="在这里输入一些文本, 然后按回车", container=False)
     with gr.Blocks(title="LLaVA", theme=gr.themes.Default(), css=block_css) as demo:
         state = gr.State()
 
@@ -323,37 +323,37 @@ def build_demo(embed_mode):
                         show_label=False,
                         container=False)
 
-                imagebox = gr.Image(type="pil")
+                imagebox = gr.Image(type="pil",label="图片")
                 image_process_mode = gr.Radio(
                     ["Crop", "Resize", "Pad", "Default"],
                     value="Default",
-                    label="Preprocess for non-square image", visible=False)
+                    label="非正方形图像的预处理方式", visible=False)
 
                 cur_dir = os.path.dirname(os.path.abspath(__file__))
                 gr.Examples(examples=[
-                    [f"{cur_dir}/examples/extreme_ironing.jpg", "What is unusual about this image?"],
-                    [f"{cur_dir}/examples/waterview.jpg", "What are the things I should be cautious about when I visit here?"],
-                ], inputs=[imagebox, textbox])
+                    [f"{cur_dir}/examples/extreme_ironing.jpg", "这张照片有什么不寻常之处?"],
+                    [f"{cur_dir}/examples/waterview.jpg", "当我走到这里时，我应该注意哪些事情?"],
+                ], inputs=[imagebox, textbox],label="示例")
 
-                with gr.Accordion("Parameters", open=False) as parameter_row:
+                with gr.Accordion("参数", open=False) as parameter_row:
                     temperature = gr.Slider(minimum=0.0, maximum=1.0, value=0.2, step=0.1, interactive=True, label="Temperature",)
                     top_p = gr.Slider(minimum=0.0, maximum=1.0, value=0.7, step=0.1, interactive=True, label="Top P",)
                     max_output_tokens = gr.Slider(minimum=0, maximum=1024, value=512, step=64, interactive=True, label="Max output tokens",)
 
             with gr.Column(scale=8):
-                chatbot = gr.Chatbot(elem_id="chatbot", label="LLaVA Chatbot", height=550)
+                chatbot = gr.Chatbot(elem_id="chatbot", label="拓思~识图", height=550)
                 with gr.Row():
                     with gr.Column(scale=8):
                         textbox.render()
                     with gr.Column(scale=1, min_width=50):
-                        submit_btn = gr.Button(value="Send", variant="primary")
+                        submit_btn = gr.Button(value="发送", variant="primary")
                 with gr.Row(elem_id="buttons") as button_row:
-                    upvote_btn = gr.Button(value="👍  Upvote", interactive=False)
-                    downvote_btn = gr.Button(value="👎  Downvote", interactive=False)
-                    flag_btn = gr.Button(value="⚠️  Flag", interactive=False)
-                    #stop_btn = gr.Button(value="⏹️  Stop Generation", interactive=False)
-                    regenerate_btn = gr.Button(value="🔄  Regenerate", interactive=False)
-                    clear_btn = gr.Button(value="🗑️  Clear history", interactive=False)
+                    upvote_btn = gr.Button(value="👍  很满意", interactive=False)
+                    downvote_btn = gr.Button(value="👎  不满意", interactive=False)
+                    flag_btn = gr.Button(value="⚠️  标记", interactive=False)
+                    #stop_btn = gr.Button(value="⏹️  停止生成", interactive=False)
+                    regenerate_btn = gr.Button(value="🔄  重新生成", interactive=False)
+                    clear_btn = gr.Button(value="🗑️  清除历史", interactive=False)
 
         if not embed_mode:
             gr.Markdown(tos_markdown)
